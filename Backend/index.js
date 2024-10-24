@@ -1,12 +1,13 @@
 const { MongoClient } = require('mongodb')
 const express = require("express")
+const cors = require("cors")
 const app = express()
 
 const port = 3000
 const mongoclient = new MongoClient('mongodb+srv://pranavchopra2003:WLuvJUml0waO0KSV@clusterfirst.p38fi.mongodb.net/Edunet_Project' )
 
 app.use(express.json());
-
+app.use(cors())
 //Connecting the database
 const dbconnect = async() =>{
     try {
@@ -53,6 +54,7 @@ app.post('/signin', async(req,res) => {
 app.post('/signup', async(req,res) => {
 
     try {
+        console.log(req.body)
         const coll = mongoclient.db('Edunet_Project').collection('signup');
         const cursor = await coll.insertOne(req.body);
         // await mongoclient.close();
