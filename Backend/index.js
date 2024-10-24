@@ -20,29 +20,43 @@ const dbconnect = async() =>{
 };
 dbconnect()
 
+//Home Route
 app.get('/', (req,res) => {
     res.send("Home Route")
 })
 
+//Signin Route to authenticate users
 app.post('/signin', async(req,res) => {
+    try {
+        const {userName,password} = req.body;
+        console.log(userName)
+        console.log(password)
 
-    // const coll = client.db('Edunet_Project').collection('signup');
-    // const cursor = coll.find(filter);
-    // const result = await cursor.toArray();
-    // await client.close();
+        const coll = mongoclient.db('Edunet_Project').collection('signup');
+        const cursor = await coll.find({userName:userName , password:password});
+        const result = await cursor.toArray();
+        // await client.close();
 
-    res.send(req.body)
-    console.log(req.body)
+        console.log(result)
+
+        if(result.length==1 && userName == result[0].userName && password == result[0].password) {
+            res.send({ok:1,msg:"Valid User"})
+        } else {
+            res.send({ok:0,msg:"Invalid User"})
+        }
+    } catch(err) {
+        console.log(err)
+    }
 })
 
+//Signup Route to add users to database
 app.post('/signup', async(req,res) => {
 
     try {
-        console.log(req.body)
         const coll = mongoclient.db('Edunet_Project').collection('signup');
-        const cursor = coll.insertOne(req.body);
+        const cursor = await coll.insertOne(req.body);
         // await mongoclient.close();
-        // console.log(`Data : ${req.body}`)
+        console.log(req.body)
         res.send({ok:1,msg:"User Connected"})
 
     }catch(err){
